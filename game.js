@@ -5,6 +5,8 @@ export var flowerX = 860;
 export var flowerY = 300;
 export var textToBeDisplayed;
 export var setCheatingText;
+export var game;
+export var setStatistics;
 
 function sketchProc(processing)
 {
@@ -24,9 +26,10 @@ function sketchProc(processing)
     var obs2X = 840;
     var obs2Y = 104;
     var giftX = 860;
+    var giftY = 75;
     //helper variables
     //0 indicates that the games is running, 1 win, -1 game over
-    var game = 0;
+    game = 0;
     var giftTaken = false;
     var steelTaken = false;
     var flowerTaken = false;
@@ -36,7 +39,18 @@ function sketchProc(processing)
 
     //Cheating Variables
     textToBeDisplayed = 'NA';
+    //Statistics Variables
+    var maxAngleUpward = 0;
+    var maxAngleDownward = 0;
+    var maxTransitionTime = 0;
 
+    setStatistics = function(up , down, max)
+    {
+        maxAngleUpward = up;
+        maxAngleDownward = down;
+        maxTransitionTime = max;
+    }
+    
     setCheatingText = function(text)
     {
         textToBeDisplayed = text;
@@ -90,15 +104,27 @@ function sketchProc(processing)
             textColor = processing.color(0, 0, 0);
             processing.fill(textColor);
             processing.textSize(30);
-            processing.text("Congratulations ! Press Up Arrow to play again :)", 50, 300);
+            processing.text("Congratulations ! Press Up Arrow to play again :)", 50, 100);
+            if(maxAngleUpward > 0)
+                processing.text("Max. Angle reached Upward: "+ maxAngleUpward, 50, 150);
+            if(maxAngleDownward > 0)
+                processing.text("Max. Angle reached Downward: "+ maxAngleDownward, 50, 200);
+            if(maxTransitionTime > 0)
+                processing.text("Max. Transition Time: "+ maxTransitionTime+" sec(s)", 50, 250);
         }
         else if(game == -1)
         {
             processing.background(0, 0, 0);
             textColor = processing.color(255, 255, 255);
             processing.fill(textColor);
-            processing.textSize(30);
-            processing.text("Game Over :( ! Press Up Arrow to play again", 50, 300);
+            processing.textSize(25);
+            processing.text("Game Over :( ! Press Up Arrow to play again", 50, 100);
+            if(maxAngleUpward > 0)
+                processing.text("Max. Angle reached Upward: "+ maxAngleUpward, 50, 150);
+            if(maxAngleDownward > 0)
+                processing.text("Max. Angle reached Downward: "+ maxAngleDownward, 50, 200);
+            if(maxTransitionTime > 0)
+                processing.text("Max. Transition Time: "+ maxTransitionTime+" sec(s)", 50, 250);
         }
     }
     processing.keyPressed = function()
@@ -118,14 +144,18 @@ function sketchProc(processing)
                 marioX = 120;
                 marioY = 370;
                 flowerX = 860;
+                maxAngleDownward = 0;
+                maxAngleUpward = 0;
+                maxTransitionTime = 0;
                 if(flowerY == 300)
                 {
                     flowerY = 100;
+                    giftY = 400;
                 }
                 else{
                     flowerY = 300;
+                    giftY = 75;
                 }
-                
             }
         }
     }
@@ -136,8 +166,8 @@ function sketchProc(processing)
         //X-Condition
         if((condition1 || condition2) && (!giftTaken))
         {
-            condition1 = (415 >= (marioY-50) ) && (415 <= (marioY + 50));
-            condition2 = (385 >= (marioY-50) ) && (385 <= (marioY + 50));
+            condition1 = (giftY + 15 >= (marioY-50) ) && (giftY + 15 <= (marioY + 50));
+            condition2 = (giftY - 15 >= (marioY-50) ) && (giftY - 15 <= (marioY + 50));
             //Y-Condition
             if((condition1 || condition2) && (!giftTaken))
             {
@@ -193,10 +223,17 @@ function sketchProc(processing)
         if(giftX <= -35)
         {
             giftX = 860;
+            if(giftY == 75){
+                giftY = 400;
+            }else{
+                giftY = 75;
+            }
             giftTaken = false;
         }
         if(! giftTaken)
-            processing.image(gift, giftX, 400);
+        {
+            processing.image(gift, giftX, giftY);
+        }
     }
     function drawSteel(){
         processing.imageMode(processing.CENTER);

@@ -1,0 +1,14 @@
+{
+  "name": "super-mario",
+  "version": "1.0.0",
+  "description": "Super Mario game with the leap motion",
+  "main": "game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ebraheem",
+  "license": "ISC",
+  "dependencies": {
+    "leapjs": "^0.6.4"
+  }
+}

@@ -90,8 +90,21 @@ function checkCheats(hand){
     }
     else if(frame && (frame.hands.length == 0 || frame.hands.length == 2))
     {
+        timeStart = new Date();
+        firstTimeDownWard = true;
         noCheats = false;
         setCheatingText('Please, Adjust your hand position in front of the leap device :)');
     }
     setTimeout(specialMovementClassifier, 1);
 })();
+
+/**
+ * The Strategy of the timer works as follows:
+ *  1) Timer starts from the last time in which the threshold upward is reached
+ *      it counts until the first time in which the threshold downward is reached.
+ *  2) Timer will be restarted in case of any invalid frame came through the stream
+ *      of frames detected between the two threshold angles. Which means step 1 will be done.
+ *  3) Timer starts from the last time in which the threshold downward is reached
+ *      it counts until the first time in which the threshold upward is reached. 
+ * 
+ */

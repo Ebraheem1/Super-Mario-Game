@@ -217,7 +217,6 @@ function sketchProc(processing)
 
     }
     function checkHeart(){
- 
         processing.imageMode(processing.CENTER);
         giftX -= 2;
         if(giftX <= -35)

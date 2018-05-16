@@ -1,8 +1,8 @@
 
-
-
 export var currentFrame;
 export var Leap = require('leapjs'); 
+
+
 var options = {
     background: true,
     useAllPlugins: true,

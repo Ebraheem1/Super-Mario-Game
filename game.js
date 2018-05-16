@@ -59,6 +59,10 @@ function sketchProc(processing)
         processing.size(800, 450);
         processing.frameRate(30);
         importImgs();
+        var chart = document.getElementById("scatter-plot");
+        chart.style.display = "none";
+        var stat = document.getElementById("stats");
+        stat.style.display = "none";
         marioX = 120;
         marioY = 370;
     };
@@ -100,32 +104,52 @@ function sketchProc(processing)
         }
         else if (game == 1)
         {
-            processing.background(0, 255, 0);
-            textColor = processing.color(0, 0, 0);
-            processing.fill(textColor);
-            processing.textSize(30);
-            processing.text("Congratulations ! Press Up Arrow to play again :)", 50, 100);
-            if(maxAngleUpward > 0)
-                processing.text("Max. Angle reached Upward: "+ maxAngleUpward, 50, 150);
-            if(maxAngleDownward > 0)
-                processing.text("Max. Angle reached Downward: "+ maxAngleDownward, 50, 200);
-            if(maxTransitionTime > 0)
-                processing.text("Max. Transition Time: "+ maxTransitionTime+" sec(s)", 50, 250);
+            // processing.background(0, 255, 0);
+            // textColor = processing.color(0, 0, 0);
+            // processing.fill(textColor);
+            // processing.textSize(30);
+            // processing.text("Congratulations ! Press Up Arrow to play again :)", 50, 100);
+            // if(maxAngleUpward > 0)
+            //     processing.text("Max. Angle reached Upward: "+ maxAngleUpward, 50, 150);
+            // if(maxAngleDownward > 0)
+            //     processing.text("Max. Angle reached Downward: "+ maxAngleDownward, 50, 200);
+            // if(maxTransitionTime > 0)
+            //     processing.text("Max. Transition Time: "+ maxTransitionTime+" sec(s)", 50, 250);
+            handleBasicsWinOrLose();
+
         }
         else if(game == -1)
         {
-            processing.background(0, 0, 0);
-            textColor = processing.color(255, 255, 255);
-            processing.fill(textColor);
-            processing.textSize(25);
-            processing.text("Game Over :( ! Press Up Arrow to play again", 50, 100);
-            if(maxAngleUpward > 0)
-                processing.text("Max. Angle reached Upward: "+ maxAngleUpward, 50, 150);
-            if(maxAngleDownward > 0)
-                processing.text("Max. Angle reached Downward: "+ maxAngleDownward, 50, 200);
-            if(maxTransitionTime > 0)
-                processing.text("Max. Transition Time: "+ maxTransitionTime+" sec(s)", 50, 250);
+            // processing.background(0, 0, 0);
+            // textColor = processing.color(255, 255, 255);
+            // processing.fill(textColor);
+            // processing.textSize(25);
+            // processing.text("Game Over :( ! Press Up Arrow to play again", 50, 100);
+            // if(maxAngleUpward > 0)
+            //     processing.text("Max. Angle reached Upward: "+ maxAngleUpward, 50, 150);
+            // if(maxAngleDownward > 0)
+            //     processing.text("Max. Angle reached Downward: "+ maxAngleDownward, 50, 200);
+            // if(maxTransitionTime > 0)
+            //     processing.text("Max. Transition Time: "+ maxTransitionTime+" sec(s)", 50, 250);
+           handleBasicsWinOrLose();
         }
+    }
+    function handleBasicsWinOrLose(){
+        var canvas = document.getElementById("canvas1");
+        canvas.style.display = "none";
+        var stats = document.getElementById("stats");
+        stats.style.display = "block";
+        if(game == -1)
+        {
+            var p = document.getElementById("message");
+            p.innerHTML = "Game Over :(";
+        }
+        else if(game == 1)
+        {
+            var p = document.getElementById("message");
+            p.innerHTML = "Congratulations :)";
+        }
+        game = -3;
     }
     processing.keyPressed = function()
     {

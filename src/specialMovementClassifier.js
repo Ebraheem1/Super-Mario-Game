@@ -1,6 +1,7 @@
 import {marioY, setMarioY, setCheatingText, textToBeDisplayed, setStatistics, game} from '../game'
 
 import {currentFrame as frame, Leap} from './leapController'
+import * as C3 from 'c3';
 
 //This variable should be taken from the hand-logger after measuring the important angles in the hand
 //There is a probability that the threshold upward is different from the threshold downward
@@ -10,17 +11,22 @@ var thresholdAngleDownward = 50;
 var noCheats = true;
 var maxAngleUpward = 0;
 var maxAngleDownward = 0;
+var wristAnglesArr = [];
+var firstend = true;
+var maxTime = 0;
 //This array holds the times required for the transition between upward movement and downward movements
 var arr = [];
 var timeStart;
 var firstTimeDownWard = true;
+
+
 function directionUp(tipPosition, metacarpal) {
     if(tipPosition[1] > metacarpal[1]) return true;
     else return false;
 }
 
 function doStatistics(){
-    var maxTime = Math.max(...arr);
+    maxTime = Math.max(...arr);
     maxTime /= 1000;
     setStatistics(Number.parseFloat(maxAngleUpward).toPrecision(4), Number.parseFloat(maxAngleDownward).toPrecision(4), Number.parseFloat(maxTime).toPrecision(4));
 }
@@ -44,6 +50,7 @@ function checkCheats(hand){
 }
 
 (function specialMovementClassifier(){
+    
     if(frame && frame.hands.length > 0 && (game == 0))
     {
         var hand = frame.hands[0];
@@ -52,7 +59,13 @@ function checkCheats(hand){
         var wristAngle = Math.acos(Leap.vec3.dot(armDirection, handDirection)) * (180 / Math.PI);
         var upDirection = directionUp(hand.middleFinger.dipPosition, hand.middleFinger.mcpPosition);
         checkCheats(hand);
-        
+        wristAngle = Number.parseFloat(wristAngle).toPrecision(4);
+        if(frame.hands[0].confidence > 0.7 && noCheats){
+            if(upDirection)
+                wristAnglesArr.push(wristAngle);
+            else
+                wristAnglesArr.push(-1 * wristAngle);
+        }
         if(upDirection && (noCheats))
         {
             setCheatingText("NA");
@@ -84,9 +97,22 @@ function checkCheats(hand){
                 maxAngleDownward = wristAngle;
         }
     }
-    else if(game == 1 || game == -1)
+    else if(game == 1 || game == -1 || game == -3)
     {
-        doStatistics();
+        if(firstend)
+        {
+            doStatistics();
+            drawScatterPlot();
+            firstend = false;
+            noCheats = true;
+            maxAngleUpward = 0;
+            maxAngleDownward = 0;
+            wristAnglesArr = [];
+            maxTime = 0;
+            arr = [];
+            timeStart;
+            firstTimeDownWard = true;
+        }
     }
     else if(frame && (frame.hands.length == 0 || frame.hands.length == 2))
     {
@@ -108,3 +134,54 @@ function checkCheats(hand){
  *      it counts until the first time in which the threshold upward is reached. 
  * 
  */
+
+ function drawScatterPlot(){
+    if(maxTime > 0)
+    {
+        var p = document.getElementById("max-time");
+        p.innerHTML = "Max. Time to reach thresold: " + maxTime + " sec(s)";
+    }
+    var scatterPlot = document.getElementById("scatter-plot");
+    scatterPlot.style.display = "block";
+    scatterPlot.style.height = "50%";
+    scatterPlot.style.width = "90%";
+    var scatterX = [];
+    var scatterY = [];
+    for(var i = 0; i < wristAnglesArr.length; i++)
+      scatterX.push(i+1);
+    scatterX.unshift("frames");
+    scatterY = wristAnglesArr;
+    scatterY.unshift("Angles");
+    var scatterChart = C3.generate({
+      bindto: scatterPlot,
+      data: {
+          xs: {
+              Angles: 'frames'
+          },
+          columns: [
+              scatterX,
+              scatterY
+          ],
+          colors: {
+            Angles: '#9F3030'
+        },
+        type: 'scatter',
+      },
+      axis: {
+          x: {
+              
+              label: 'Ordered Frames',
+              tick: {
+                  fit: false,
+                  centered: true
+              }
+          },
+          y: {
+              label: 'Angles'
+          }
+      },
+      title: {
+        text: 'Wrist Angles in Accurate frames'
+      }
+    });
+ };

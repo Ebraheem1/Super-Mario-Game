@@ -33,8 +33,7 @@ function doStatistics(){
 
 
 function checkCheats(hand){
-    //Roll here represents the rotation around the z-axis
-    var rotationAngle = hand.roll() * (180 / Math.PI);
+   
     if(hand.stabilizedPalmPosition[1] < 180)
     {
         if(textToBeDisplayed == "NA")
@@ -54,6 +53,7 @@ function checkCheats(hand){
     if(frame && frame.hands.length > 0 && (game == 0))
     {
         var hand = frame.hands[0];
+        firstend = true;
         var armDirection = hand.arm.direction();
         var handDirection = hand.direction;
         var wristAngle = Math.acos(Leap.vec3.dot(armDirection, handDirection)) * (180 / Math.PI);
@@ -185,3 +185,4 @@ function checkCheats(hand){
       }
     });
  };
+

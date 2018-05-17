@@ -1,8 +1,8 @@
 export var marioY;
 export var setMarioY;
-export var flowerX = 860;
+export var flowerX = window.innerWidth + 60;
 //export var flowerY = Math.floor(Math.random() * (400 - 200)) + 200;
-export var flowerY = 300;
+export var flowerY = 0.67 * window.innerHeight;
 export var textToBeDisplayed;
 export var setCheatingText;
 export var game;
@@ -10,6 +10,8 @@ export var setStatistics;
 
 function sketchProc(processing)
 {
+    var width = window.innerWidth;
+    var height = window.innerHeight;
     //Images
     var bg = 0;
     var obstacle = 0;
@@ -17,16 +19,16 @@ function sketchProc(processing)
     var player = 0;
     var obstacle2 = 0;
     //Bezier Curve for the obstacle
-    var obs0 = [800, 104];
-    var obs1 = [56, 300];
-    var obs2 = [663, 478];
-    var obs3 = [-35, 81];
+    var obs0 = [width, 0.23 * height];
+    var obs1 = [0.07 * width, 0.67 * height];
+    var obs2 = [0.83 * width, 1.06 * height];
+    var obs3 = [-0.04 * width, 0.18 * height];
     var obs2Inc = 0;
     //Coordinates Values
-    var obs2X = 840;
-    var obs2Y = 104;
-    var giftX = 860;
-    var giftY = 75;
+    var obs2X = width + 40;
+    var obs2Y = 0.23 * height;
+    var giftX = width + 60;
+    var giftY = 0.167 * height;
     //helper variables
     //0 indicates that the games is running, 1 win, -1 game over
     game = 0;
@@ -55,13 +57,14 @@ function sketchProc(processing)
         maxAngleDownward = down;
         maxTransitionTime = max;
     }
-    
+
     setCheatingText = function(text)
     {
         textToBeDisplayed = text;
     }
     processing.setup = function(){
-        processing.size(800, 450);
+        // processing.size(800, 450);
+        processing.size(width, height);
         processing.frameRate(30);
         importImgs();
         var chart = document.getElementById("scatter-plot");
@@ -71,35 +74,36 @@ function sketchProc(processing)
         var b = document.getElementById("play-again");
         b.style.visibility = 'hidden';
         b.addEventListener("click", buttonClicked, false);
-        marioX = 120;
-        marioY = 370;
+        marioX = 0.15 * width;
+        marioY = height - 100;
     };
     function buttonClicked(){
         obs2Inc = 0;
-        obs2X = 840;
-        obs2Y = 104;
-        giftX = 860;
+        obs2X = width + 40;
+        obs2Y = 0.23 * height;
+        giftX = width + 60;
         game = 0;
         giftTaken = false;
         steelTaken = false;
         flowerTaken = false;
-        marioX = 120;
-        marioY = 370;
-        flowerX = 860;
+        marioX = 0.15 * width;
+        marioY = height - 100;
+        flowerX = width + 60;
         maxAngleDownward = 0;
         maxAngleUpward = 0;
         maxTransitionTime = 0;
-        if(flowerY == 300)
+        if(flowerY == 0.67 * height)
         {
-            flowerY = 100;
-            giftY = 400;
+            flowerY = 0.22 * height;
+            giftY = 0.89 * height;
         }
         else{
-            flowerY = 300;
-            giftY = 75;
+            flowerY = 0.67 * height;
+            giftY = 0.167 * height;
         }
         handleReplay();
     }
+
     function importImgs(){
         player = processing.loadImage("../assets/mario.png");
         bg = processing.loadImage("../assets/back-ground.jpg");
@@ -115,7 +119,7 @@ function sketchProc(processing)
 
     setMarioY = function (value)
     {
-        if((value > 64) && (value < 370))
+        if((value > 64) && (value < height - 100))
         {
             marioY = value;
         }
@@ -124,14 +128,15 @@ function sketchProc(processing)
     processing.draw = function(){
         if(game == 0){
             processing.imageMode(processing.CORNER);
-            processing.image(bg,0,0);
+            processing.image(bg,0,0, width, height);
+
             if(textToBeDisplayed != 'NA')
             {
                 var color = processing.color(0, 0, 0);
                 var fontSize = 25;
                 processing.fill(color);
                 processing.textSize(fontSize);
-                processing.text(textToBeDisplayed, 20, 80);
+                processing.text(textToBeDisplayed, 0.025 * width, 0.178 * height);
             }
             drawAnim();
             drawMario();
@@ -145,7 +150,7 @@ function sketchProc(processing)
         {
             handleBasicsWinOrLose();
         }
-        
+
     }
     function handleBasicsWinOrLose(){
         var canvas = document.getElementById("canvas1");
@@ -188,12 +193,12 @@ function sketchProc(processing)
             //Y-Condition
             if((condition1 || condition2) && (!giftTaken))
             {
-                marioX += 100;
+                marioX += 200;
                 giftTaken = true;
-                if(marioX >= 735)
+                if(marioX >= width - 50)
                 {
                     game = 1;
-                }  
+                }
             }
         }
         //Check on the Flower
@@ -205,7 +210,7 @@ function sketchProc(processing)
             condition2 = ((flowerY - 20) >= (marioY-50) ) && ((flowerY - 20) <= (marioY + 50));
             if((condition1 || condition2) && (!flowerTaken))
             {
-               marioX -= 40;
+               marioX -= 80;
                flowerTaken = true;
                if(marioX <= 0)
                {
@@ -223,7 +228,7 @@ function sketchProc(processing)
             condition2 = ((obs2Y - 15) >= (marioY-50) ) && ((obs2Y - 15) <= (marioY + 50));
             if((condition1 || condition2) && (!steelTaken) && (obs2Inc > 0))
             {
-                marioX -= 10;
+                marioX -= 20;
                 steelTaken = true;
                 if(marioX <= 0)
                 {
@@ -236,13 +241,13 @@ function sketchProc(processing)
     function checkHeart(){
         processing.imageMode(processing.CENTER);
         giftX -= 2;
-        if(giftX <= -35)
+        if(giftX <= -0.044 * width)
         {
-            giftX = 860;
-            if(giftY == 75){
-                giftY = 400;
+            giftX = width + 60;
+            if(giftY == 0.167 * height){
+                giftY = 0.89 * height;
             }else{
-                giftY = 75;
+                giftY = 0.167 * height;
             }
             giftTaken = false;
         }
@@ -258,30 +263,30 @@ function sketchProc(processing)
             processing.image(obstacle2, obs2X, obs2Y);
         }
     }
-    
+
     function drawMario(){
         processing.imageMode(processing.CENTER);
         processing.image(player, marioX, marioY);
     }
 
     function checkFlower(){
- 
+
         processing.imageMode(processing.CENTER);
         flowerX -= 2;
-        if(flowerX <= -35)
+        if(flowerX <= -0.044*width)
         {
-            flowerX = 860;
-            if(flowerY == 300)
+            flowerX = width + 60;
+            if(flowerY == 0.67*height)
             {
-                flowerY = 100;
+                flowerY = 0.22*height;
             }else{
-                flowerY = 300;
+                flowerY = 0.67*height;
             }
             flowerTaken = false;
         }
         if(! flowerTaken)
             processing.image(obstacle, flowerX, flowerY);
-        
+
     }
     function doBezier()
     {
@@ -301,7 +306,7 @@ function sketchProc(processing)
             raisehandframe = (raisehandframe + 1) % raisehand.length;
             processing.imageMode(processing.CENTER);
             var img = raisehand[raisehandframe];
-            processing.image(img, 400, 225);
+            processing.image(img, 0.5*width, 0.5*height);
 
             if(raisehandframe == 23 && raisehandlastframe < 20) {
                 raisehandframe = 22;

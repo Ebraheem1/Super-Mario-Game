@@ -33,7 +33,7 @@ function doStatistics(){
 
 
 function checkCheats(hand){
-   
+
     if(hand.stabilizedPalmPosition[1] < 180)
     {
         if(textToBeDisplayed == "NA")
@@ -49,7 +49,7 @@ function checkCheats(hand){
 }
 
 (function specialMovementClassifier(){
-    
+
     if(frame && frame.hands.length > 0 && (game == 0))
     {
         var hand = frame.hands[0];
@@ -131,8 +131,8 @@ function checkCheats(hand){
  *  2) Timer will be restarted in case of any invalid frame came through the stream
  *      of frames detected between the two threshold angles. Which means step 1 will be done.
  *  3) Timer starts from the last time in which the threshold downward is reached
- *      it counts until the first time in which the threshold upward is reached. 
- * 
+ *      it counts until the first time in which the threshold upward is reached.
+ *
  */
 
  function drawScatterPlot(){
@@ -169,7 +169,7 @@ function checkCheats(hand){
       },
       axis: {
           x: {
-              
+
               label: 'Ordered Frames',
               tick: {
                   fit: false,
@@ -185,4 +185,3 @@ function checkCheats(hand){
       }
     });
  };
-
